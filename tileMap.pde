@@ -12,7 +12,7 @@ int windowSize = 500;
 int levelSize = 1000 / tileSize;//level size in tiles
 
 int firstLevel[][];
-
+Table table;
 
 
 /*
@@ -20,17 +20,26 @@ int firstLevel[][];
 *  'o' to close tiles
 */
 void setup(){
-  size(500,500);
-  frameRate(60);
-  
+  firstLevel = new int [levelSize][levelSize];
   tiles = loadImage("tilesBLANK.png");
   setupTiles();  //to cut image into 16x16 tiles
-  firstLevel = new int [levelSize][levelSize];
+  
+  size(500,500);
+  frameRate(60);
+  //table = new Table();
+  table = loadTable("firstTry.csv");  
+  for(int i = 0; i < table.getRowCount(); ++i){
+    for(int j = 0; j <table.getRowCount(); ++j ){
+      firstLevel[j][i] = table.getInt(i,j);
+    }
+  }
+
+  
 }
 
 void draw(){
   background(148,177,156);
-   drawMap();
+   drawMap(firstLevel);
   if(mapEditor){
     showMapEditor();    
   }  
@@ -90,10 +99,10 @@ void keyPressed(){
    editorIsVisible = !editorIsVisible;
   
 }
-void drawMap(){
+void drawMap(int [][] level){
   for(int i = 0; i < windowSize / tileSize; ++i){
     for(int j = 0; j < windowSize / tileSize; ++j){
-      image(map[firstLevel[i][j]],i * tileSize,j * tileSize);  
+      image(map[level[i][j]],i * tileSize,j * tileSize);  
     }
   }
   
