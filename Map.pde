@@ -10,15 +10,15 @@ class Map{
   boolean editorIsVisible = true;
   int windowSize = 500;
   
-  int levelSize = 1000 / tileSize;//level size in tiles
+  int levelSize = 1000 / tileSize;                  //level size in tiles
   
-  int firstLevel[][];  //first level "map" with tile's id's 
-  Table table;          //table object to upload data from csv file
+  int firstLevel[][];                               //first level "map" with tile's id's 
+  Table table;                                      //table object to upload data from csv file
   
   //constructor
   Map(){            
     firstLevel = new int [levelSize][levelSize];
-    tiles = loadImage("tilesBLANK.png");
+    tiles = loadImage("tilesBLANK.png");            //"tilesBLANK.png" png with tiles
     
     setupTiles();  //cut image into 16x16 tiles
    

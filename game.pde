@@ -1,5 +1,16 @@
+
+/*
+*  'w' 'a' 's' 'd' keys are to move main character
+*  'c' to "dwop the flashlight" and move faster
+*  'p' to open editor, 'o' to temporalily close tiles
+*  ' ' to use flashlight
+*/
+
+
 ArrayList <Bug> bugs = new ArrayList();
-int amount = 20;
+int amount = 3;
+
+Map map;
 
 boolean [] keys;
 float playerSpeed = 1.5;
@@ -7,38 +18,48 @@ Player player;
 Laser laser;
 
 void setup(){
-  size(600,600); 
+  size(450,450); 
   frameRate(60);
+  
+  map = new Map();
+  
   for(int i = 0; i < amount; ++i){
      bugs.add(new Bug());
   }
+  
   player = new Player();
-  laser = new Laser(-100, -100);
+  laser = new Laser(-100, -100,player.charWidth,  player.charHeight);
   
   keys = new boolean[128];
   
 }
 
 void draw(){
-  background(20,64,74); // (148,177,156)
+  background (148,177,156); // (20,64,74); //
+  
+  map.drawMap(map.firstLevel);
+  
+
   
   for(int i = 0 ; i < amount; ++i){
     float dist = sqrt((bugs.get(i).x - laser.x) * (bugs.get(i).x - laser.x) + (bugs.get(i).y - laser.y) * (bugs.get(i).y - laser.y));
     if(dist <= laser.radius){
       bugs.remove(i);
-      amount--;
-      
+      amount--;   
     }
   }
   
-  for(int i = 0; i < amount; ++i){
-     bugs.get(i).drawBug();
-  }
+  for(int i = 0; i < amount; ++i)
+     bugs.get(i).drawBug(map.firstLevel, map.tileSize);
+  
+  if(map.mapEditor)
+    map.showMapEditor();    
   
   move();
+  
   player.drawPlayer();
-  if(player.cooldown <= 240)
-    laser.drawLaser();
+  
+  laser.drawLaser();
 } 
 
 void move(){
@@ -65,15 +86,21 @@ void move(){
     
   if(keys[' ']){
     if(player.hasGun)
-    laser = new Laser(player.x, player.y);
+    laser = new Laser(player.x, player.y,player.charWidth,  player.charHeight );
   }
     
-    player.updatePlayer(xDelta, yDelta);
+    player.updatePlayer(xDelta, yDelta, map.firstLevel, map.tileSize);
 }
 
 void keyPressed(){
   keys[key] = true;
+  
+  if(key == 'p') 
+    map.mapEditor = !map.mapEditor; 
+  if(key == 'o')
+    map.editorIsVisible = !map.editorIsVisible;
 }
+
 void keyReleased(){
   keys[key] = false;
 }

@@ -5,9 +5,9 @@ class Laser{
   float radius;
   
   
-  Laser(float x, float y){
-    this.x = x;
-    this.y = y;
+  Laser(float x, float y, int charWidth, int charHeight ){
+    this.x = x + charWidth/2;
+    this.y = y + charHeight/2;
     maxDuration = 120;
     curDuration = 1;
   }

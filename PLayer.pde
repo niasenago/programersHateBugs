@@ -7,20 +7,28 @@ class Player{
   boolean inMotion, hasGun;
   int curDirection;
   float curFrame;
-  float cooldown;
+  PVector topLeft, topRight, bottomLeft, bottomRight;  //player's corner coords
+  
+  
+  int charHeight = 26;
+  int charWidth = 16;
   
   final int UP = 2, LEFT = 3, DOWN = 1, RIGHT = 0;  //sprireSheet row
   
   Player(){
+    topLeft = new PVector();
+    topRight = new PVector();
+    bottomLeft = new PVector();
+    bottomRight = new PVector();
+    
     inMotion = false;
     hasGun = true;
     curDirection = 1;
     curFrame = 0;
     
-    cooldown = 240;
     
-    x = 300;
-    y = 300;
+    x = 100;
+    y = 80;
     
     setupSprites();
   }
@@ -32,8 +40,8 @@ class Player{
     
     for(int i = 0; i < 4; ++i){
       for(int j = 0; j < 4; ++j){
-        movement[j][i] = playerSpriteSheet.get(8 + (32 * j),3 + (32 * i),16,26);                  // x,y, how much to cut from x, how much to cut from y
-        gun[j][i] = gunSpriteSheet.get(8 + (32 * j),3 + (32 * i),16,26); 
+        movement[j][i] = playerSpriteSheet.get(8 + (32 * j),3 + (32 * i),charWidth,charHeight);                  // x,y, how much to cut from x, how much to cut from y
+        gun[j][i] = gunSpriteSheet.get(8 + (32 * j),3 + (32 * i),charWidth,charHeight); 
       } 
     }
     
@@ -50,7 +58,7 @@ class Player{
        image(movement[curDirection][0], x,y);  
   } 
   
-  void updatePlayer(int xDelta, int yDelta){
+  void updatePlayer(int xDelta, int yDelta, int [][] level,int tileSize){
     inMotion = true;
     curFrame = (curFrame + 0.2) % 3;    //0.2 we can change %3 3 - number of diffrent frames 
     
@@ -67,7 +75,7 @@ class Player{
     
     x += xDelta;
     y += yDelta;
-    if(isPlayerOffScreen(x,y)){
+    if(isPlayerOffScreen(x,y) || isPlayerInWals(x, y, level, tileSize) ){
       x -= xDelta;
       y -= yDelta;
     }
@@ -78,5 +86,27 @@ class Player{
     return true;
   else
     return false;
+  }
+  
+  boolean isPlayerInWals(float x,float y,int [][] level, int tileSize){
+    
+    topLeft.x = (int) x / tileSize;
+    topLeft.y = (int) y / tileSize;
+    
+    bottomRight.x = (int) (x + charWidth) / tileSize;
+    bottomRight.y = (int) (y + charHeight) / tileSize;
+    
+    topRight.x = (int) (x + charWidth) / tileSize;
+    topRight.y = (int) y / tileSize;
+    
+    bottomLeft.x = (int) x / tileSize;
+    bottomLeft.y = (int) (y + charHeight) / tileSize;
+    
+    if((level[(int)topLeft.x][(int)topLeft.y] == 12) || (level[(int)topRight.x][(int)topRight.y] == 12))          //12 is wall id
+      return true;  
+    else if  ((level[(int)bottomRight.x][(int)bottomRight.y] == 12)|| (level[(int)bottomLeft.x][(int)bottomLeft.y] == 12) )
+      return true;
+    else
+      return false;
   }
 }
